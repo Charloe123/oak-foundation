@@ -13,7 +13,7 @@ create table if not exists public.participants (
   organization text not null check (char_length(organization) between 1 and 200),
   role text not null check (role in ('Partner','OAK Staff','Coordination Team','Presenter','Observer')),
   email text not null,
-  phone text not null,
+  phone text,
   sub_partner_program_area text,
   dietary_requirements text,
   accessibility_requirements text,

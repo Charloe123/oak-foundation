@@ -1,20 +1,16 @@
 "use client";
 
-import { useState } from "react";
+import type { ParticipantRole } from "@/lib/site";
+import RoleNavigation from "@/components/navigation/RoleNavigation";
 import {
   ChevronLeft,
   Globe,
   ExternalLink,
   Mail,
   ChevronRight,
-  UserPlus,
-  Calendar,
 } from "lucide-react";
 
-export default function PartnerDetailsScreen() {
-  const [activeNavTab, setActiveNavTab] = useState<
-    "register" | "programme" | "partners"
-  >("partners");
+export default function PartnerDetailsScreen({ role }: { role: ParticipantRole }) {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-28">
@@ -128,45 +124,7 @@ export default function PartnerDetailsScreen() {
         </button>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-6 py-2 shadow-lg z-50">
-        <div className="max-w-md mx-auto flex justify-around items-center">
-          <button
-            onClick={() => setActiveNavTab("register")}
-            className={`flex flex-col items-center py-1.5 px-5 rounded-2xl transition-all ${
-              activeNavTab === "register"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <UserPlus className="w-5 h-5 stroke-[2.2]" />
-            <span className="text-[10px] font-bold mt-1">Register</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("programme")}
-            className={`flex flex-col items-center py-1.5 px-5 rounded-2xl transition-all ${
-              activeNavTab === "programme"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <Calendar className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Programme</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("partners")}
-            className={`flex flex-col items-center py-1.5 px-5 rounded-2xl transition-all ${
-              activeNavTab === "partners"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <Globe className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Partners</span>
-          </button>
-        </div>
-      </nav>
+      <RoleNavigation role={role} />
     </div>
   );
 }

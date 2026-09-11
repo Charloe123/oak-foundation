@@ -1,11 +1,6 @@
-import type { Metadata } from "next";
-import EventCheckIn from "@/components/checkin/EventCheckIn";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "Event Check-In | OAK Foundation Partner Gathering",
-  description: "Check in attendees for the OAK Foundation Partner Gathering.",
-};
-
-export default function CheckInPage() {
-  return <EventCheckIn />;
+export default function CheckinPage() {
+  redirect("/check-in");
 }
+

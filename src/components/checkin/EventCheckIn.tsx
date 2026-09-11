@@ -1,87 +1,75 @@
 "use client";
 
-import { useState } from "react";
-import { Scan } from "lucide-react";
+import { useEffect, useRef, useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
+import { Html5Qrcode } from "html5-qrcode";
+import { CheckCircle2, Scan, XCircle } from "lucide-react";
+import { EVENT } from "@/lib/site";
+import { checkInParticipant, type CheckInResult } from "@/app/actions";
 
-interface Attendee {
-  id: string;
-  name: string;
-  code: string;
-  initials: string;
-  role: string;
-  roleType: "partner" | "staff" | "coordination";
-}
-
-const attendees: Attendee[] = [
-  {
-    id: "1",
-    name: "Collin Manyande",
-    code: "OAK-2026-7842-XKPH",
-    initials: "MS",
-    role: "Partner",
-    roleType: "partner",
-  },
-  {
-    id: "2",
-    name: "James Odhiambo",
-    code: "OAK-2026-1193-JWQA",
-    initials: "JO",
-    role: "OAK Staff",
-    roleType: "staff",
-  },
-  {
-    id: "3",
-    name: "Awa Diallo",
-    code: "OAK-2026-3310-ADGE",
-    initials: "AD",
-    role: "Coordination Team",
-    roleType: "coordination",
-  },
-  {
-    id: "4",
-    name: "Kayden Mamu",
-    code: "OAK-2026-5592-FWBN",
-    initials: "KM",
-    role: "Partner",
-    roleType: "partner",
-  },
-];
+type ScanState =
+  | { status: "idle" }
+  | { status: "checking"; code: string }
+  | { status: "success"; result: CheckInResult; code: string }
+  | { status: "failed"; code: string };
 
 export default function EventCheckIn() {
   const [manualCode, setManualCode] = useState("");
+  const [day, setDay] = useState<string>(EVENT.dates[0]);
+  const [scan, setScan] = useState<ScanState>({ status: "idle" });
+  const [cameraError, setCameraError] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const scannerDivId = "oak-qr-reader";
+  const router = useRouter();
+  const checkingRef = useRef(false);
 
-  const handleCheckIn = (code: string) => {
-    alert(`Checking in: ${code}`);
-  };
+  function handleCheckIn(code: string) {
+    const trimmed = code.trim();
+    if (!trimmed || checkingRef.current) return;
+    checkingRef.current = true;
+    setScan({ status: "checking", code: trimmed });
+    startTransition(async () => {
+      try {
+        const result = await checkInParticipant(trimmed, day);
+        if (result.ok) setScan({ status: "success", result, code: trimmed });
+        else if (result.error === "QR_NOT_RECOGNISED") router.push("/check-in/failed");
+        else setScan({ status: "failed", code: trimmed });
+      } finally {
+        checkingRef.current = false;
+      }
+    });
+  }
 
-  const getBadgeStyle = (type: Attendee["roleType"]) => {
-    switch (type) {
-      case "partner":
-        return "bg-[#f0f3fa] text-[#2b3a67] border-[#e2e8f0]";
-      case "staff":
-        return "bg-[#eafbf3] text-[#0d824d] border-[#bbf7d0]";
-      case "coordination":
-        return "bg-[#fff7ed] text-[#c2410c] border-[#fed7aa]";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
+  useEffect(() => {
+    let cancelled = false;
+    const scanner = new Html5Qrcode(scannerDivId);
+    Html5Qrcode.getCameras()
+      .then((cameras) => {
+        if (cancelled || cameras.length === 0) return;
+        return scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 220, height: 220 } },
+          (decoded) => handleCheckIn(decoded),
+          undefined
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setCameraError("Camera unavailable — use manual code entry below.");
+      });
+    return () => {
+      cancelled = true;
+      scanner.stop().catch(() => undefined);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [day]);
 
-  const getDotColor = (type: Attendee["roleType"]) => {
-    switch (type) {
-      case "partner":
-        return "bg-[#2b3a67]";
-      case "staff":
-        return "bg-[#10b981]";
-      case "coordination":
-        return "bg-[#f97316]";
-      default:
-        return "bg-gray-400";
-    }
-  };
+  const successParticipant =
+    scan.status === "success" ? scan.result.participant : undefined;
+  const alreadyCheckedIn =
+    scan.status === "success" ? scan.result.alreadyCheckedIn : false;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] py-10 px-4 flex justify-center items-center font-sans">
+    <div className="min-h-screen bg-[#f8fafc] py-10 px-4 flex justify-center font-sans">
       <div className="w-full max-w-[480px] space-y-6">
         <header className="space-y-1">
           <h1 className="text-[28px] font-extrabold text-[#0f172a] tracking-tight">
@@ -91,91 +79,115 @@ export default function EventCheckIn() {
             Scan an attendee QR code to check them in
           </p>
         </header>
-
-        <div className="bg-[#0b1329] rounded-[28px] overflow-hidden shadow-xl text-white relative">
-          <div className="h-[360px] relative flex flex-col items-center justify-between p-6">
-            <div className="relative w-[240px] h-[240px] my-auto flex items-center justify-center">
-              <div className="absolute top-0 left-0 w-10 h-10 border-t-2 border-l-2 border-white/80 rounded-tl-2xl" />
-              <div className="absolute top-0 right-0 w-10 h-10 border-t-2 border-r-2 border-white/80 rounded-tr-2xl" />
-              <div className="absolute bottom-0 left-0 w-10 h-10 border-b-2 border-l-2 border-white/80 rounded-bl-2xl" />
-              <div className="absolute bottom-0 right-0 w-10 h-10 border-b-2 border-r-2 border-white/80 rounded-br-2xl" />
-
-              <span className="text-xs font-medium text-slate-400/80 tracking-wide select-none">
-                Position QR code within the frame
-              </span>
-            </div>
+        <div className="bg-white border border-slate-100 rounded-[28px] p-6 shadow-sm space-y-3">
+          <h2 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
+            Event Day
+          </h2>
+          <div className="grid grid-cols-3 gap-2">
+            {EVENT.dates.map((d, i) => (
+              <button
+                key={d}
+                type="button"
+                onClick={() => setDay(d)}
+                className={`rounded-2xl px-3 py-3 text-xs font-bold transition-all ${
+                  day === d
+                    ? "bg-[#233862] text-white shadow-md"
+                    : "bg-[#f1f5f9] text-slate-600 hover:bg-slate-200"
+                }`}
+              >
+                Day {i + 1}
+                <span className="block text-[10px] font-semibold opacity-70">
+                  {EVENT.dateLabels[i]}
+                </span>
+              </button>
+            ))}
           </div>
-
+        </div>
+        <div className="bg-[#0b1329] rounded-[28px] overflow-hidden shadow-xl text-white relative">
+          <div className="relative flex flex-col items-center justify-between p-6">
+            <div id={scannerDivId} className="w-full max-w-[300px] overflow-hidden rounded-2xl" />
+            <p className="mt-3 text-xs text-slate-400 font-medium">
+              {cameraError || "Hold camera steady · Auto-scans in 1–2 seconds"}
+            </p>
+          </div>
           <div className="bg-[#0f1938] px-5 py-4 border-t border-white/5 flex items-center gap-3">
             <div className="p-2 rounded-xl bg-white/5 text-slate-300">
               <Scan className="w-5 h-5" />
             </div>
             <p className="text-xs text-slate-400 font-medium leading-relaxed">
-              Hold camera steady · Auto-scans in 1–2 seconds
+              QR contains the registration token only — no personal data.
             </p>
           </div>
         </div>
-
-        <div className="bg-white border border-slate-100 rounded-[28px] p-6 shadow-sm space-y-4">
-          <h2 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
-            Simulate QR Scan
-          </h2>
-
-          <div className="space-y-3">
-            {attendees.map((attendee) => (
-              <div
-                key={attendee.id}
-                onClick={() => handleCheckIn(attendee.code)}
-                className="flex items-center justify-between p-3.5 border border-slate-200/80 rounded-2xl hover:bg-slate-50 transition-colors cursor-pointer group"
-              >
-                <div className="flex items-center gap-3.5">
-                  <div className="w-11 h-11 rounded-xl bg-[#233862] text-white flex items-center justify-center font-bold text-sm">
-                    {attendee.initials}
-                  </div>
-
-                  <div>
-                    <h3 className="font-bold text-[#0f172a] text-sm leading-snug">
-                      {attendee.name}
-                    </h3>
-                    <p className="text-[11px] font-semibold text-slate-400 tracking-wide">
-                      {attendee.code}
-                    </p>
-                  </div>
-                </div>
-
-                <div
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-semibold ${getBadgeStyle(
-                    attendee.roleType
-                  )}`}
-                >
-                  <span
-                    className={`w-1.5 h-1.5 rounded-full ${getDotColor(
-                      attendee.roleType
-                    )}`}
-                  />
-                  <span>{attendee.role}</span>
-                </div>
-              </div>
-            ))}
+        {scan.status === "checking" && (
+          <p role="status" className="text-center text-sm font-semibold text-slate-500">
+            Checking in…
+          </p>
+        )}
+        {scan.status === "success" && successParticipant && (
+          <div
+            role="status"
+            className={`rounded-[28px] border p-6 shadow-sm space-y-2 ${
+              alreadyCheckedIn
+                ? "bg-amber-50 border-amber-200"
+                : "bg-emerald-50 border-emerald-200"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              <CheckCircle2
+                className={`w-5 h-5 ${alreadyCheckedIn ? "text-amber-600" : "text-emerald-600"}`}
+              />
+              <h2 className="font-extrabold text-[#0f172a] text-sm">
+                {alreadyCheckedIn ? "Already checked in today" : "Checked in"}
+              </h2>
+            </div>
+            <p className="text-sm font-bold text-[#0f172a]">
+              {successParticipant.firstName} {successParticipant.lastName}
+            </p>
+            <p className="text-xs text-slate-500 font-medium">
+              {successParticipant.organization} · {successParticipant.role} ·{" "}
+              {successParticipant.registrationId}
+            </p>
+            <button
+              type="button"
+              onClick={() => setScan({ status: "idle" })}
+              className="mt-2 text-xs font-bold text-[#233862] hover:underline"
+            >
+              Scan next attendee
+            </button>
           </div>
-        </div>
-
+        )}
+        {scan.status === "failed" && (
+          <div
+            role="alert"
+            className="rounded-[28px] bg-red-50 border border-red-200 p-6 shadow-sm space-y-2"
+          >
+            <div className="flex items-center gap-2">
+              <XCircle className="w-5 h-5 text-red-600" />
+              <h2 className="font-extrabold text-[#0f172a] text-sm">Check-in failed</h2>
+            </div>
+            <p className="text-xs text-slate-500 font-medium">
+              Could not complete check-in. Please try again.
+            </p>
+          </div>
+        )}
         <div className="bg-white border border-slate-100 rounded-[28px] p-6 shadow-sm space-y-4">
           <h2 className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
             Manual Code Entry
           </h2>
-
           <div className="flex gap-3">
             <input
               type="text"
-              placeholder="OAK-2026-XXXX-XXXX"
+              placeholder="Paste QR token (uuid)"
               value={manualCode}
               onChange={(e) => setManualCode(e.target.value)}
-              className="flex-1 bg-[#f1f5f9] border border-transparent rounded-2xl px-4 py-3.5 text-sm font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-300 transition-all uppercase"
+              className="flex-1 bg-[#f1f5f9] border border-transparent rounded-2xl px-4 py-3.5 text-sm font-medium text-slate-700 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-slate-300 transition-all"
             />
             <button
+              type="button"
+              disabled={isPending || !manualCode.trim()}
               onClick={() => handleCheckIn(manualCode)}
-              className="bg-[#233862] hover:bg-[#1b2b4d] active:scale-[0.98] text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md transition-all flex items-center justify-center"
+              className="bg-[#233862] hover:bg-[#1b2b4d] active:scale-[0.98] text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-md transition-all flex items-center justify-center disabled:opacity-50"
             >
               Check
             </button>
@@ -185,3 +197,4 @@ export default function EventCheckIn() {
     </div>
   );
 }
+

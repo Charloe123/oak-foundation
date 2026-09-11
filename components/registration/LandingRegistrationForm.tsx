@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { PARTICIPANT_ROLES } from "@/lib/site";
+import { registerParticipant } from "@/app/actions";
 
 const inputClass =
   "w-full rounded-xl bg-oak-input px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-oak-navy/40";
@@ -16,6 +18,9 @@ function Err({ id, msg }: { id: string; msg?: string }) {
 export default function LandingRegistrationForm() {
   const [done, setDone] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitError, setSubmitError] = useState("");
+  const [isSubmitting, startTransition] = useTransition();
+  const router = useRouter();
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -30,14 +35,25 @@ export default function LandingRegistrationForm() {
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = "Enter a valid email address";
     if (!data.get("consent")) next.consent = "Please accept the privacy policy and consent to continue";
     setErrors(next);
-    if (Object.keys(next).length === 0) setDone(true);
+    setSubmitError("");
+    if (Object.keys(next).length !== 0) return;
+
+    startTransition(async () => {
+      const result = await registerParticipant(data);
+      if (result.ok && result.redirectTo) {
+        setDone(true);
+        router.replace(result.redirectTo);
+      } else {
+        setSubmitError(result.error || "Registration could not be completed.");
+      }
+    });
   }
 
   if (done) {
     return (
       <div role="status" className="rounded-2xl bg-oak-background p-5 text-center">
         <p className="font-extrabold text-oak-navy">Registration received</p>
-        <p className="mt-1 text-sm text-oak-label">QR confirmation appears here once saving is connected.</p>
+        <p className="mt-1 text-sm text-oak-label">Redirecting to your event page...</p>
       </div>
     );
   }
@@ -106,8 +122,13 @@ export default function LandingRegistrationForm() {
         </label>
         <Err id="consent-e" msg={errors.consent} />
       </div>
-      <button type="submit" className="w-full rounded-2xl bg-oak-navy py-4 font-bold text-white hover:bg-oak-navy-deep">
-        Register
+      {submitError && <p role="alert" className="text-xs font-medium text-red-600">{submitError}</p>}
+      <button
+        type="submit"
+        disabled={isSubmitting}
+        className="w-full rounded-2xl bg-oak-navy py-4 font-bold text-white hover:bg-oak-navy-deep disabled:opacity-60"
+      >
+        {isSubmitting ? "Registering..." : "Register"}
       </button>
     </form>
   );

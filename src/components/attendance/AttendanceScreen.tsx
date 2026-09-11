@@ -1,20 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Users,
-  Scan,
-  UserPlus,
-  Calendar,
-  Globe,
-  LayoutGrid,
-} from "lucide-react";
+import { useRouter } from "next/navigation";
+import type { ParticipantRole } from "@/lib/site";
+import RoleNavigation from "@/components/navigation/RoleNavigation";
+import { Scan, Users } from "lucide-react";
 
-export default function AttendanceScreen() {
-  const [activeNavTab, setActiveNavTab] = useState<
-    "register" | "checkin" | "programme" | "partners" | "attendance"
-  >("attendance");
-
+export default function AttendanceScreen({ role }: { role: ParticipantRole }) {
+  const router = useRouter();
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-28">
       <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm">
@@ -37,7 +29,7 @@ export default function AttendanceScreen() {
             Attendance
           </h1>
           <p className="text-sm text-slate-400 font-medium mt-0.5">
-            Check-in tracking · 9–11 March 2026
+            Check-in tracking · 9–11 November 2026
           </p>
         </div>
 
@@ -57,7 +49,7 @@ export default function AttendanceScreen() {
           </div>
 
           <button
-            onClick={() => alert("Navigating to Check-In Scanner...")}
+            onClick={() => router.push("/check-in")}
             className="mt-2 bg-[#1b335a] hover:bg-[#122442] active:scale-[0.98] text-white font-bold px-6 py-3.5 rounded-2xl shadow-md transition-all flex items-center justify-center gap-2.5 text-xs"
           >
             <Scan className="w-4 h-4 stroke-[2.5]" />
@@ -95,69 +87,7 @@ export default function AttendanceScreen() {
         </div>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-3 py-2 shadow-lg z-50">
-        <div className="max-w-md mx-auto flex justify-between items-center">
-          <button
-            onClick={() => setActiveNavTab("register")}
-            className={`flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all ${
-              activeNavTab === "register"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <UserPlus className="w-5 h-5 stroke-[2.2]" />
-            <span className="text-[10px] font-bold mt-1">Register</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("checkin")}
-            className={`flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all ${
-              activeNavTab === "checkin"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <Scan className="w-5 h-5 stroke-[2.2]" />
-            <span className="text-[10px] font-bold mt-1">Check In</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("programme")}
-            className={`flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all ${
-              activeNavTab === "programme"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <Calendar className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Programme</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("partners")}
-            className={`flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all ${
-              activeNavTab === "partners"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <Globe className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Partners</span>
-          </button>
-
-          <button
-            onClick={() => setActiveNavTab("attendance")}
-            className={`flex flex-col items-center py-1.5 px-3 rounded-2xl transition-all ${
-              activeNavTab === "attendance"
-                ? "bg-slate-100/80 text-[#122b52]"
-                : "text-slate-400 hover:text-slate-600"
-            }`}
-          >
-            <LayoutGrid className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Attendance</span>
-          </button>
-        </div>
-      </nav>
+      <RoleNavigation role={role} />
     </div>
   );
 }

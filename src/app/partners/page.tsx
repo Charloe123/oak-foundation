@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+import { requireParticipant } from "@/lib/auth";
 import PartnerDirectoryScreen from "@/components/partners/PartnerDirectoryScreen";
 
-export const metadata: Metadata = {
-  title: "Partner Directory | OAK Foundation Partner Gathering",
-  description: "Browse partners and sub-partners attending the OAK Foundation Partner Convening 2026.",
-};
-
-export default function PartnersPage() {
-  return <PartnerDirectoryScreen />;
+export default async function PartnersPage() {
+  const session = await requireParticipant("/partners");
+  return (
+    <>
+      <PartnerDirectoryScreen role={session.role} />
+    </>
+  );
 }

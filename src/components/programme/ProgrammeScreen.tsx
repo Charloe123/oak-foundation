@@ -165,7 +165,7 @@ export default function ProgrammeScreen() {
             </p>
             <p className="text-lg font-black leading-tight">Day 1</p>
             <p className={`text-xs font-medium ${selectedDay === 1 ? "text-slate-300" : "text-slate-400"}`}>
-              9 Mar
+              9 Nov
             </p>
           </button>
 
@@ -182,7 +182,7 @@ export default function ProgrammeScreen() {
             </p>
             <p className="text-lg font-black leading-tight">Day 2</p>
             <p className={`text-xs font-medium ${selectedDay === 2 ? "text-slate-300" : "text-slate-400"}`}>
-              10 Mar
+              10 Nov
             </p>
           </button>
 
@@ -199,7 +199,7 @@ export default function ProgrammeScreen() {
             </p>
             <p className="text-lg font-black leading-tight">Day 3</p>
             <p className={`text-xs font-medium ${selectedDay === 3 ? "text-slate-300" : "text-slate-400"}`}>
-              11 Mar
+              11 Nov
             </p>
           </button>
         </div>

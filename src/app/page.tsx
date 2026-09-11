@@ -37,7 +37,7 @@ export default function Home() {
         </section>
         <p className="px-2 text-center text-[11px] leading-relaxed text-oak-label">
           Your data is secured and handled by OAK Foundation.{" "}
-          <Link href="/programme" className="underline">View programme</Link>
+          <Link href="/program" className="underline">View programme</Link>
         </p>
       </main>
     </div>
