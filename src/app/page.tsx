@@ -14,7 +14,7 @@ function StatCard({ value, label }: { value: string; label: string }) {
 export default function Home() {
   return (
     <div className="min-h-full bg-oak-background">
-      <header className="bg-oak-navy text-white">
+      <header className="bg-oak-navy text-white lg:hidden">
         <div className="mx-auto flex w-full max-w-md items-center gap-3 px-5 py-3">
           <p className="text-sm font-extrabold tracking-wide">OAK</p>
           <span className="h-6 w-px bg-white/30" aria-hidden="true" />

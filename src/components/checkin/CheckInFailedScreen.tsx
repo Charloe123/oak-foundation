@@ -13,7 +13,7 @@ export default function CheckInFailedScreen() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-12">
-      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm lg:hidden">
         <div className="flex items-center gap-3">
           <div className="flex items-center font-serif text-lg font-extrabold tracking-wider border-r border-white/20 pr-3">
             OAK

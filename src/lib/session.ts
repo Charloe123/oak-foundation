@@ -29,10 +29,10 @@ function base64urlDecode(value: string) {
   return Uint8Array.from(binary, (character) => character.charCodeAt(0));
 }
 
-async function getSessionKey() {
+async function getSessionKey(): Promise<CryptoKey | null> {
   const secret = process.env.OAK_SESSION_SECRET;
   if (!secret) {
-    throw new Error("Missing OAK_SESSION_SECRET. Add it to the Vercel environment variables.");
+    return null;
   }
   return crypto.subtle.importKey(
     "raw",
@@ -46,6 +46,9 @@ async function getSessionKey() {
 export async function signParticipantSession(session: ParticipantSession): Promise<string> {
   const payload = base64urlEncode(textEncoder().encode(JSON.stringify(session)));
   const key = await getSessionKey();
+  if (!key) {
+    throw new Error("Missing OAK_SESSION_SECRET.");
+  }
   const signature = await crypto.subtle.sign("HMAC", key, textEncoder().encode(payload));
   return `${payload}.${base64urlEncode(new Uint8Array(signature))}`;
 }
@@ -57,6 +60,7 @@ export async function verifyParticipantSession(value: string | undefined): Promi
 
   try {
     const key = await getSessionKey();
+    if (!key) return null;
     const valid = await crypto.subtle.verify(
       "HMAC",
       key,

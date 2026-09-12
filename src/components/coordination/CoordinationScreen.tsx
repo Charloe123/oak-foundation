@@ -15,7 +15,7 @@ const cards = [
 export default function CoordinationScreen({ session }: { session: ParticipantSession }) {
   return (
     <div className="min-h-screen bg-oak-background pb-28 text-oak-text">
-      <header className="bg-oak-navy px-6 py-4 text-white">
+      <header className="bg-oak-navy px-6 py-4 text-white lg:hidden">
         <div className="mx-auto flex max-w-md items-center gap-3">
           <span className="text-sm font-extrabold tracking-wide">OAK</span>
           <span className="h-6 w-px bg-white/30" />

@@ -13,14 +13,16 @@ const routeAliases: Record<string, string> = {
 
 export async function proxy(request: NextRequest) {
   const response = await updateSession(request);
-  const pathname = normalizePath(request.nextUrl.pathname);
-  const alias = routeAliases[request.nextUrl.pathname.replace(/\/+$/, "") || "/"];
+  const rawPath = request.nextUrl.pathname.replace(/\/+$/, "") || "/";
+  const alias = routeAliases[rawPath];
 
-  if (alias && alias !== pathname) {
+  if (alias) {
     const url = request.nextUrl.clone();
     url.pathname = alias;
     return NextResponse.redirect(url);
   }
+
+  const pathname = normalizePath(rawPath);
 
   if (PUBLIC_ROUTES.has(pathname)) {
     return response;

@@ -23,3 +23,19 @@ body {
   -webkit-font-smoothing: antialiased;
 }
 
+/* html5-qrcode injects its own video/canvas: force them to fill the frame. */
+.oak-scanner video,
+.oak-scanner canvas,
+.oak-scanner img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  border-radius: 0 !important;
+}
+.oak-scanner > div {
+  border: none !important;
+  box-shadow: none !important;
+}
+

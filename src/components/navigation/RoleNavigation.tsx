@@ -25,19 +25,20 @@ export default function RoleNavigation({ role }: { role: ParticipantRole }) {
   }
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/80 bg-white/95 px-3 py-2 shadow-lg backdrop-blur-md">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/80 bg-white/95 px-3 py-2 shadow-lg backdrop-blur-md lg:hidden">
       <div className="mx-auto flex max-w-md items-center justify-around">
         {isPartner ? (
           <>
             <NavLink href="/qr-code" label="QR Code" active={pathname === "/qr-code"} icon={<QrCode className="h-5 w-5" />} />
+            <NavLink href="/program" label="Program" active={pathname === "/program" || pathname.startsWith("/program/")} icon={<CalendarDays className="h-5 w-5" />} />
             <NavLink href="/partners" label="Partners" active={pathname === "/partners" || pathname.startsWith("/partners/")} icon={<Globe2 className="h-5 w-5" />} />
           </>
         ) : isCoordination ? (
           <>
             <NavLink href="/coordination" label="Coordination" active={pathname === "/coordination"} icon={<LayoutDashboard className="h-5 w-5" />} />
-            <NavLink href="/check-in" label="Check In" active={pathname === "/check-in"} icon={<ScanLine className="h-5 w-5" />} />
+            <NavLink href="/check-in" label="Check In" active={pathname === "/checkin"} icon={<ScanLine className="h-5 w-5" />} />
             <NavLink href="/attendance" label="Attendance" active={pathname === "/attendance"} icon={<Users className="h-5 w-5" />} />
-            <NavLink href="/program" label="Program" active={pathname === "/program" || pathname.startsWith("/program/")} icon={<CalendarDays className="h-5 w-5" />} />
+            <NavLink href="/program" label="Program" active={pathname === "/programme" || pathname.startsWith("/programme/")} icon={<CalendarDays className="h-5 w-5" />} />
             <NavLink href="/partners" label="Partners" active={pathname === "/partners" || pathname.startsWith("/partners/")} icon={<Globe2 className="h-5 w-5" />} />
           </>
         ) : (

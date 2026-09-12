@@ -275,13 +275,19 @@ The Supabase service-role key must never be exposed to the client.
 
 ## Environment Variables
 
-Create a `.env.local` file in the project root.
+Create a `.env.local` file in the project root from `.env.example`.
 
-Example:
+```bash
+cp .env.example .env.local
+```
+
+The app accepts either `NEXT_PUBLIC_SUPABASE_ANON_KEY` (standard Supabase name) or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (legacy alias).
 
 ```env
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_supabase_publishable_key
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+# Or: NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=your_legacy_publishable_key
+OAK_SESSION_SECRET=your_long_random_secret
 ```
 
 Never commit `.env.local` or other secret credentials to GitHub.

@@ -16,6 +16,14 @@ function value(formData: FormData, key: string) {
   return String(formData.get(key) || "").trim();
 }
 
+function hasSupabaseConfig() {
+  return Boolean(
+    process.env.NEXT_PUBLIC_SUPABASE_URL &&
+      (process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
+  );
+}
+
 export async function registerParticipant(formData: FormData): Promise<RegistrationResult> {
   const firstName = value(formData, "firstName");
   const lastName = value(formData, "lastName");
@@ -34,7 +42,7 @@ export async function registerParticipant(formData: FormData): Promise<Registrat
     return { ok: false, error: "Enter a valid email address." };
   }
 
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+  if (!hasSupabaseConfig()) {
     return { ok: false, error: "Supabase environment variables are not configured." };
   }
   if (!process.env.OAK_SESSION_SECRET) {
@@ -121,7 +129,7 @@ export async function checkInParticipant(
   if (!["2026-11-09", "2026-11-10", "2026-11-11"].includes(attendanceDate)) {
     return { ok: false, error: "Select a valid event day." };
   }
-  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+  if (!hasSupabaseConfig()) {
     return { ok: false, error: "Supabase environment variables are not configured." };
   }
 
@@ -157,7 +165,7 @@ export async function checkInParticipant(
 }
 
 export async function logoutParticipant(): Promise<{ ok: true }> {
-  if (process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) {
+  if (hasSupabaseConfig()) {
     const supabase = await createClient();
     await supabase.auth.signOut({ scope: "local" }).catch(() => undefined);
   }

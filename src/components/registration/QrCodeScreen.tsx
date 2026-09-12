@@ -1,13 +1,14 @@
 import Link from "next/link";
-import { Calendar, CheckCircle2, Globe, RotateCcw, UserPlus } from "lucide-react";
+import { CheckCircle2, RotateCcw } from "lucide-react";
 import type { ParticipantSession } from "@/lib/session";
 import { QrCodeFigure } from "./QrCodeFigure";
 import QrDownloadButton from "./QrDownloadButton";
+import RoleNavigation from "@/components/navigation/RoleNavigation";
 
 export default function QrCodeScreen({ session }: { session: ParticipantSession }) {
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-24">
-      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm lg:hidden">
         <div className="flex items-center gap-3">
           <div className="flex items-center font-serif text-lg font-extrabold tracking-wider border-r border-white/20 pr-3">
             OAK
@@ -96,28 +97,7 @@ export default function QrCodeScreen({ session }: { session: ParticipantSession 
         </Link>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-slate-200/80 px-6 py-2 shadow-lg z-50">
-        <div className="max-w-md mx-auto flex justify-around items-center">
-          <span className="flex flex-col items-center py-1.5 px-5 rounded-2xl bg-slate-100/80 text-[#122b52]">
-            <UserPlus className="w-5 h-5 stroke-[2.2]" />
-            <span className="text-[10px] font-bold mt-1">Register</span>
-          </span>
-          <Link
-            href="/program"
-            className="flex flex-col items-center py-1.5 px-5 rounded-2xl text-slate-400 hover:text-slate-600 transition-all"
-          >
-            <Calendar className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Programme</span>
-          </Link>
-          <Link
-            href="/partners"
-            className="flex flex-col items-center py-1.5 px-5 rounded-2xl text-slate-400 hover:text-slate-600 transition-all"
-          >
-            <Globe className="w-5 h-5 stroke-[2]" />
-            <span className="text-[10px] font-bold mt-1">Partners</span>
-          </Link>
-        </div>
-      </nav>
+      <RoleNavigation role={session.role} />
     </div>
   );
 }

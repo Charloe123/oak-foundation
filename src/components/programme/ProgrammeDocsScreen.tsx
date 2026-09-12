@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { ParticipantRole } from "@/lib/site";
 import RoleNavigation from "@/components/navigation/RoleNavigation";
 import {
@@ -114,11 +115,17 @@ const resources: Resource[] = [
 ];
 
 export default function ProgrammeDocsScreen({ role }: { role: ParticipantRole }) {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"Schedule" | "Docs">("Docs");
+
+  const goToSchedule = () => {
+    setViewMode("Schedule");
+    router.push("/program");
+  };
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-slate-800 font-sans pb-28">
-      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm lg:hidden">
         <div className="flex items-center gap-3">
           <div className="flex items-center font-serif text-lg font-extrabold tracking-wider border-r border-white/20 pr-3">
             OAK
@@ -144,7 +151,7 @@ export default function ProgrammeDocsScreen({ role }: { role: ParticipantRole })
 
         <div className="bg-[#e2e8f0]/60 p-1 rounded-2xl flex items-center">
           <button
-            onClick={() => setViewMode("Schedule")}
+            onClick={goToSchedule}
             className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
               viewMode === "Schedule"
                 ? "bg-white text-[#0f172a] shadow-sm"

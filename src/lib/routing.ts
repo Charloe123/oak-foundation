@@ -5,11 +5,11 @@ export const ROLE_ROUTES = {
   "OAK Staff": "/dashboard",
   Presenter: "/dashboard",
   Observer: "/dashboard",
-  "Coordination Team": "/coordination",
+  "Coordination Team": "/qr-code",
 } as const satisfies Record<ParticipantRole, string>;
 
 export const ROLE_PERMISSIONS: Record<ParticipantRole, readonly string[]> = {
-  Partner: ["/qr-code", "/partners"],
+  Partner: ["/qr-code", "/partners", "/program"],
   "OAK Staff": ["/dashboard", "/program", "/partners"],
   Presenter: ["/dashboard", "/program", "/partners"],
   Observer: ["/dashboard", "/program", "/partners"],
@@ -40,8 +40,7 @@ export function canAccessPath(role: ParticipantRole, pathname: string): boolean 
 }
 
 export function getFallbackRoute(role: ParticipantRole): string {
-  if (role === "Partner") return "/qr-code";
-  if (role === "Coordination Team") return "/coordination";
+  if (role === "Partner" || role === "Coordination Team") return "/qr-code";
   return "/dashboard";
 }
 
@@ -50,6 +49,7 @@ export function normalizePath(pathname: string): string {
     "/programme": "/program",
     "/programme/docs": "/program/docs",
     "/checkin": "/check-in",
+    "/checkin/failed": "/check-in/failed",
     "/registration-pass": "/qr-code",
   };
   const withoutTrailingSlash = pathname.length > 1 ? pathname.replace(/\/+$/, "") : pathname;

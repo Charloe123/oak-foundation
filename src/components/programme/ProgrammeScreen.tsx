@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Star, MapPin, ChevronDown, ChevronUp } from "lucide-react";
 
 type SessionType = "Plenary" | "Breakout" | "Workshop" | "Social";
@@ -68,9 +69,15 @@ const sessionsData: Session[] = [
 ];
 
 export default function ProgrammeScreen() {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState<"Schedule" | "Docs">("Schedule");
   const [selectedDay, setSelectedDay] = useState(1);
   const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
+
+  const goToDocs = () => {
+    setViewMode("Docs");
+    router.push("/program/docs");
+  };
 
   const toggleAccordion = (id: string) => {
     setExpandedSessionId(expandedSessionId === id ? null : id);
@@ -104,7 +111,7 @@ export default function ProgrammeScreen() {
 
   return (
     <div className="min-h-screen bg-[#f8fafc] text-[#0f172a] font-sans pb-16">
-      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm">
+      <header className="bg-[#122b52] text-white px-6 py-4 flex items-center justify-between shadow-sm lg:hidden">
         <div className="flex items-center gap-3">
           <div className="flex items-center font-serif text-lg font-extrabold tracking-wider border-r border-white/20 pr-3">
             OAK
@@ -140,7 +147,7 @@ export default function ProgrammeScreen() {
             Schedule
           </button>
           <button
-            onClick={() => setViewMode("Docs")}
+            onClick={goToDocs}
             className={`flex-1 py-2.5 text-xs font-bold rounded-xl transition-all ${
               viewMode === "Docs"
                 ? "bg-white text-[#0f172a] shadow-sm"
@@ -212,7 +219,7 @@ export default function ProgrammeScreen() {
             <span>09:00 - 10:30</span>
           </div>
 
-          <h2 className="text-2xl font-black leading-tight tracking-tight">
+          <h2 className="text-lg font-black leading-tight tracking-tight">
             Opening Plenary: Pathways to Impact
           </h2>
 
