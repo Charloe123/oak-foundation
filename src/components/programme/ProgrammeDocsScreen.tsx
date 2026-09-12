@@ -237,43 +237,43 @@ export default function ProgrammeDocsScreen({ role }: { role: ParticipantRole })
           <div className="grid grid-cols-2 gap-2.5">
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1511578314322-379afb476865?auto=format&fit=crop&w=600&q=80"
-                alt="Plenary hall presentation"
+                src="/Image%20(Opening%20plenary%20session).png"
+                alt="Opening plenary session"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=600&q=80"
-                alt="Conference lighting stage"
+                src="/Image%20(Keynote%20speaker).png"
+                alt="Keynote speaker"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=600&q=80"
-                alt="Team working together"
+                src="/Image%20(Workshop%20in%20progress).png"
+                alt="Workshop in progress"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1431540015161-0bf868a2d407?auto=format&fit=crop&w=600&q=80"
-                alt="Conference hall chairs"
+                src="/Image%20(Roundtable%20discussion).png"
+                alt="Roundtable discussion"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80"
-                alt="Group collaboration"
+                src="/Image%20(Breakout%20group%20discussion).png"
+                alt="Breakout group discussion"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
             <div className="h-32 rounded-2xl overflow-hidden bg-slate-900 relative">
               <img
-                src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?auto=format&fit=crop&w=600&q=80"
-                alt="Attendee walking"
+                src="/Image%20(Welcome%20reception%20dinner).png"
+                alt="Welcome reception dinner"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
               />
             </div>
