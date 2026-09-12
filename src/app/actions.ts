@@ -24,6 +24,29 @@ function hasSupabaseConfig() {
   );
 }
 
+export async function getAttendanceStats() {
+  if (!hasSupabaseConfig()) {
+    console.log("Supabase not configured");
+    return { expected: 0, checkedIn: 0 };
+  }
+  const supabase = await createClient();
+  const { data, error } = await supabase.rpc("attendance_overview", {
+    p_attendance_date: "2026-11-09",
+  });
+  if (error) {
+    console.log("Supabase error:", error.message);
+    return { expected: 0, checkedIn: 0 };
+  }
+  if (!data || data.length === 0) {
+    console.log("No data returned");
+    return { expected: 0, checkedIn: 0 };
+  }
+  const total = data[0].total_participants ?? 0;
+  const checked = data[0].checked_in ?? 0;
+  console.log("Attendance overview - total:", total, "checked_in:", checked);
+  return { expected: total, checkedIn: checked };
+}
+
 export async function registerParticipant(formData: FormData): Promise<RegistrationResult> {
   const firstName = value(formData, "firstName");
   const lastName = value(formData, "lastName");

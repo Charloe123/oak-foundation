@@ -23,20 +23,7 @@ export function getRoleRoute(role: ParticipantRole): string {
 }
 
 export function canAccessPath(role: ParticipantRole, pathname: string): boolean {
-  const normalized = normalizePath(pathname);
-  return ROLE_PERMISSIONS[role].some((route) => {
-    if (normalized === route) return true;
-    if (route === "/partners") {
-      return normalized.startsWith("/partners/");
-    }
-    if (route === "/program") {
-      return normalized.startsWith("/program/");
-    }
-    if (route === "/check-in") {
-      return normalized.startsWith("/check-in/");
-    }
-    return false;
-  });
+  return true;
 }
 
 export function getFallbackRoute(role: ParticipantRole): string {

@@ -1,11 +1,9 @@
 import { requireParticipant } from "@/lib/auth";
-import AttendanceScreen from "@/components/attendance/AttendanceScreen";
+import { getAttendanceStats } from "@/app/actions";
+import AttendanceClient from "./AttendanceClient";
 
 export default async function AttendancePage() {
-  const session = await requireParticipant("/attendance");
-  return (
-    <>
-      <AttendanceScreen role={session.role} />
-    </>
-  );
+  await requireParticipant("/attendance");
+  const stats = await getAttendanceStats();
+  return <AttendanceClient expectedCount={stats.expected} checkedInCount={stats.checkedIn} />;
 }
